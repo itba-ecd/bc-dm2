@@ -56,10 +56,12 @@ set.seed(102191)
 
 kclusters <- 5  # cantidad de clusters
 
-# la llamada  a kmeans
-kmedias <- kmeans( dchico,
+campos_cluster_esc <- setdiff( colnames( dchico), "numero_de_cliente" )
+
+kmedias <- kmeans( dchico[, campos_cluster_esc, with=FALSE],
   centers= kclusters,
   nstart= 20)
+
 
 #--------------------------------------
 # Aqui queda el cluster asignado a cada registro
