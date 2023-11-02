@@ -55,22 +55,21 @@ modelo_NOcero <- rpart(
 ) # profundidad maxima del arbol
 
 
-# aplico el modelo a los datos nuevos
-prediccion <- predict(
-        object = modelo,
-        newdata = dapply
-)
+# aplico el modelo a los datos nuevos que son cero
+prediccion_cero <- predict(
+        object = modelo_cero,
+        newdata = dapply[ mplazo_fijo_dolares==0] )
+
+dapply[ mplazo_fijo_dolares==0, pred := prediccion_cero]
 
 
-# agrego a dapply una columna nueva que es la prediccion
-dapply[, pred := prediccion]
+# aplico el modelo a los datos nuevos que son mayores a cero
+prediccion_NOcero <- predict(
+        object = modelo_NOcero,
+        newdata = dapply[ mplazo_fijo_dolares>0] )
 
-# veo como fue la prediccion
-dapply[ , list( numero_de_cliente, fplazo_fijo_dolares, pred ) ]
+dapply[ mplazo_fijo_dolares>0, pred := prediccion_NOcero]
 
-# la prediccion para los que SI tienen plazo fijo
-dapply[ mplazo_fijo_dolares>0, 
-  list( numero_de_cliente, mplazo_fijo_dolares, fplazo_fijo_dolares, pred ) ]
 
 # Calculo el  RMSE
 RMSE <- dapply[ , sqrt( mean( (fplazo_fijo_dolares - pred ) ^ 2, na.rm=TRUE ) ) ]
@@ -98,8 +97,7 @@ dapply[ fplazo_fijo_dolares==0, fplazo_fijo_dolares := 1 ]
 
 ggplot(dapply, aes(x = pred, y = fplazo_fijo_dolares)) +
   geom_point() +
-  coord_trans(y="log10") +
-  geom_abline( col= "red" , coord_trans(y="log10")) +
+  geom_abline( col= "red") +
   scale_x_log10() +
   scale_y_log10()
 
