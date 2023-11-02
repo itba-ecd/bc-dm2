@@ -110,8 +110,7 @@ dapply[ fplazo_fijo_dolares==0, fplazo_fijo_dolares := 1 ]
 
 ggplot(dapply, aes(x = pred, y = fplazo_fijo_dolares)) +
   geom_point() +
-  coord_trans(y="log10") +
-  geom_abline( col= "red" , coord_trans(y="log10")) +
+  geom_abline( col= "red") +
   scale_x_log10() +
   scale_y_log10()
 
